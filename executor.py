@@ -2,7 +2,8 @@
 
 import sys
 
-def execute(argv, verbose = False):
+
+def execute(argv, verbose=False):
     from qiskit import QuantumProgram
     # Create the quantum program
     qp = QuantumProgram()
@@ -17,7 +18,7 @@ def execute(argv, verbose = False):
 
     # Compile and run
     backend = 'local_qasm_simulator'
-    qobj=qp.compile([circuit], backend) # Compile your program
+    qobj = qp.compile([circuit], backend)  # Compile your program
     result = qp.run(qobj, wait=2, timeout=240)
 
     if verbose:
@@ -25,9 +26,9 @@ def execute(argv, verbose = False):
 
     print(result.get_counts(circuit))
 
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: %s <file>" % sys.argv[0])
     filename = sys.argv[1]
     execute(filename)
-

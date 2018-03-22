@@ -3,20 +3,24 @@
 import sys
 import unittest
 
+
 class OneBitAdder(unittest.TestCase):
     results = {}
+
     def test_result(self):
         for r in self.results:
-            self.assertTrue(len(r) ==4)
+            self.assertTrue(len(r) == 4)
             a = int(r[3], 2)
             b = int(r[2], 2)
             x = int(r[0:2], 2)
-            print("%d + %d = %d" %(a, b, x))
+            print("%d + %d = %d" % (a, b, x))
             self.assertEqual(x, a+b)
+
 
 def validate(r):
     OneBitAdder.results = r
     unittest.main()
+
 
 def oneBitAdder():
     from qiskit import QuantumProgram
@@ -49,7 +53,7 @@ def oneBitAdder():
     obc.ccx(qr[0], qr[1], qr[3])
 
     # Measure
-    for i in range(0,n_qubits):
+    for i in range(0, n_qubits):
         obc.measure(qr[i], cr[i])
 
     # Get qasm source
@@ -60,7 +64,7 @@ def oneBitAdder():
     backend = 'local_qasm_simulator'
     circuits = [Circuit]  # Group of circuits to execute
 
-    qobj=qp.compile(circuits, backend) # Compile your program
+    qobj = qp.compile(circuits, backend)  # Compile your program
 
     result = qp.run(qobj, wait=2, timeout=240)
     print(result)
@@ -68,6 +72,7 @@ def oneBitAdder():
     results = result.get_counts(Circuit)
     print(results)
     validate(results)
+
 
 if __name__ == "__main__":
     oneBitAdder()

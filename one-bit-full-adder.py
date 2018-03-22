@@ -35,7 +35,7 @@ obc.ccx(qr[0], qr[2], qr[4])
 obc.ccx(qr[1], qr[2], qr[4])
 
 # Measure
-for i in range(0,n_qubits):
+for i in range(0, n_qubits):
     obc.measure(qr[i], cr[i])
 
 # Get qasm source
@@ -46,7 +46,7 @@ print(source)
 backend = 'local_qasm_simulator'
 circuits = [Circuit]  # Group of circuits to execute
 
-qobj=qp.compile(circuits, backend) # Compile your program
+qobj = qp.compile(circuits, backend)  # Compile your program
 
 result = qp.run(qobj, wait=2, timeout=240)
 print(result)
