@@ -1,50 +1,73 @@
 #!/usr/bin/env python
 
-from qiskit import QuantumProgram
+import sys
+import unittest
 
-Circuit = 'oneBitAdderCircuit'
+class OneBitAdder(unittest.TestCase):
+    results = {}
+    def test_result(self):
+        for r in self.results:
+            self.assertTrue(len(r) ==4)
+            a = int(r[3], 2)
+            b = int(r[2], 2)
+            x = int(r[0:2], 2)
+            print("%d + %d = %d" %(a, b, x))
+            self.assertEqual(x, a+b)
 
-# Create the quantum program
-qp = QuantumProgram()
+def validate(r):
+    OneBitAdder.results = r
+    unittest.main()
 
-# Creating registers
-n_qubits = 4
-qr = qp.create_quantum_register("qr", n_qubits)
-cr = qp.create_classical_register("cr", n_qubits)
+def oneBitAdder():
+    from qiskit import QuantumProgram
+    Circuit = 'oneBitAdderCircuit'
 
-# One-bit adder circuit, where:
-# qr[2] = qr[0] + qr[1]
-# qr[3] = carry
-obc = qp.create_circuit(Circuit, [qr], [cr])
+    # Create the quantum program
+    qp = QuantumProgram()
 
-# Prepare bits to add
-obc.h(qr[0])
-obc.h(qr[1])
+    # Creating registers
+    n_qubits = 4
+    qr = qp.create_quantum_register("qr", n_qubits)
+    cr = qp.create_classical_register("cr", n_qubits)
 
-# qr[2] = 1 when qr0/1 has only one 1;
-#       = 0 when qr0/1 are both 0 or 1;
-obc.cx(qr[0], qr[2])
-obc.cx(qr[1], qr[2])
+    # One-bit adder circuit, where:
+    # qr[2] = qr[0] + qr[1]
+    # qr[3] = carry
+    obc = qp.create_circuit(Circuit, [qr], [cr])
 
-# qr[3] = 1 when qr0/1 are both 1;
-#       = 0 otherwise;
-obc.ccx(qr[0], qr[1], qr[3])
+    # Prepare bits to add
+    obc.h(qr[0])
+    obc.h(qr[1])
 
-# Measure
-for i in range(0,n_qubits):
-    obc.measure(qr[i], cr[i])
+    # qr[2] = 1 when qr0/1 has only one 1;
+    #       = 0 when qr0/1 are both 0 or 1;
+    obc.cx(qr[0], qr[2])
+    obc.cx(qr[1], qr[2])
 
-# Get qasm source
-source = qp.get_qasm(Circuit)
-print(source)
+    # qr[3] = 1 when qr0/1 are both 1;
+    #       = 0 otherwise;
+    obc.ccx(qr[0], qr[1], qr[3])
 
-# Compile and run
-backend = 'local_qasm_simulator'
-circuits = [Circuit]  # Group of circuits to execute
+    # Measure
+    for i in range(0,n_qubits):
+        obc.measure(qr[i], cr[i])
 
-qobj=qp.compile(circuits, backend) # Compile your program
+    # Get qasm source
+    source = qp.get_qasm(Circuit)
+    print(source)
 
-result = qp.run(qobj, wait=2, timeout=240)
-print(result)
+    # Compile and run
+    backend = 'local_qasm_simulator'
+    circuits = [Circuit]  # Group of circuits to execute
 
-print(result.get_counts(Circuit))
+    qobj=qp.compile(circuits, backend) # Compile your program
+
+    result = qp.run(qobj, wait=2, timeout=240)
+    print(result)
+
+    results = result.get_counts(Circuit)
+    print(results)
+    validate(results)
+
+if __name__ == "__main__":
+    oneBitAdder()
