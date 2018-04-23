@@ -110,7 +110,20 @@ def shorTest():
 
     results = result.get_counts(Circuit)
     print(results)
-    #validate(results)
+    validate(results)
+
+
+def validate(results):
+    from collections import defaultdict
+    d = defaultdict(set)
+    for r in results:
+        x = int(r[4:8], 2)
+        u = int(r[1:4], 2)
+        print("U %d : X %d" %(u, x))
+        d[u].add(x)
+    #print(d)
+    r =  {i:sorted(d[i]) for i in d.keys()}
+    print(r)
 
 
 if __name__ == "__main__":
