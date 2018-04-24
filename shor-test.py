@@ -103,7 +103,7 @@ def shorTest():
     backend = 'local_qasm_simulator'
     circuits = [Circuit]  # Group of circuits to execute
 
-    qobj = qp.compile(circuits, backend)  # Compile your program
+    qobj = qp.compile(circuits, backend, shots = 32)  # Compile your program
 
     result = qp.run(qobj, wait=2, timeout=240)
     print(result)
@@ -115,15 +115,23 @@ def shorTest():
 
 def validate(results):
     from collections import defaultdict
+    import math
     d = defaultdict(set)
     for r in results:
         x = int(r[4:8], 2)
         u = int(r[1:4], 2)
         print("U %d : X %d" %(u, x))
         d[u].add(x)
-    #print(d)
     r =  {i:sorted(d[i]) for i in d.keys()}
     print(r)
+
+    # Let's assume the period is 4
+    # TODO: this period shall be calculated by quantum fourier transform
+    N = 15
+    r = 4
+    p = math.gcd(int(7 ** (r / 2) - 1), N)
+    q = math.gcd(int(7 ** (r / 2) + 1), N)
+    print("p: %d, q: %d" %(p, q))
 
 
 if __name__ == "__main__":
